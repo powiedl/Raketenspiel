@@ -14,6 +14,7 @@ const hitsSpan = document.querySelector('.hits');
 const pointsSpan = document.querySelector('.points');
 const levelSpan = document.querySelector('.level');
 const ufoSpeedSpan = document.querySelector('.ufoSpeed');
+const xSpan = document.querySelector('.x');
 
 let ufoSpeed = 0.7;
 const rocket = PIXI.Sprite.from('assets/rocket.png');
@@ -50,10 +51,15 @@ gameInterval(function() {
 
 function leftKeyPressed() {
     rocket.x -= 5;
+    if (rocket.x < 0) {rocket.x = 0; }
+    xSpan.innerText = rocket.x;
+
 }
 
 function rightKeyPressed() {
     rocket.x += 5;
+    if (rocket.x > app.view.width - 25) {rocket.x = app.view.width - 25; }
+    xSpan.innerText = rocket.x;
 }
 
  function spaceKeyPressed() {
