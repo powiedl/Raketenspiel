@@ -1,6 +1,8 @@
 // Ausgangsversion von https://www.youtube.com/watch?v=YGlJsgdgHuw
 const app = new PIXI.Application();
-const ufos = [];
+let ufos = [];
+let bullets = [];
+
 document.body.appendChild(app.view);
 let hits = 0;
 let points = 0;
@@ -14,6 +16,7 @@ const hitsSpan = document.querySelector('.hits');
 const pointsSpan = document.querySelector('.points');
 const levelSpan = document.querySelector('.level');
 const ufoSpeedSpan = document.querySelector('.ufoSpeed');
+
 const xSpan = document.querySelector('.x');
 
 let ufoSpeed = 0.7;
@@ -23,6 +26,14 @@ rocket.y = 520;
 rocket.scale.x = 0.05;
 rocket.scale.y = 0.05;
 app.stage.addChild(rocket);
+
+function cleanUpUfos() {
+    ufos = ufos.filter(el => el.y < app.view.height);
+ }
+
+function cleanUpBullets() {
+    bullets = bullets.filter(el => el.y > -20);
+}
 
 gameInterval(function() {
     const ufoNr=random(1,2);
@@ -45,6 +56,8 @@ gameInterval(function() {
         ufoSpeed *= increaseSpeed;
         ufoSpeedSpan.innerText = Math.floor(Math.round(ufoSpeed*10))/10;
     }
+    cleanUpUfos();
+    cleanUpBullets();
 },1000);
 
 //const bullet = PIXI.Sprite.from('assets/bullet.png');
@@ -53,7 +66,6 @@ function leftKeyPressed() {
     rocket.x -= 5;
     if (rocket.x < 0) {rocket.x = 0; }
     xSpan.innerText = rocket.x;
-
 }
 
 function rightKeyPressed() {
@@ -70,6 +82,7 @@ function rightKeyPressed() {
     bullet.scale.x = 0.02;
     bullet.scale.y = 0.02;
     app.stage.addChild(bullet);
+    bullets.push(bullet);
     flyUp(bullet,3);
     waitForCollision(bullet,ufos).then(function([bullet,ufo]) {
         app.stage.removeChild(ufo);
