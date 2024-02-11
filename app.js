@@ -4,8 +4,17 @@ const ufos = [];
 document.body.appendChild(app.view);
 let hits = 0;
 let points = 0;
+let level = 1;
+let gameRunningTicks = 0;
+
+const difficultyIncreaseEveryTicks=15;
+const increaseSpeed=1.1;
+
 const hitsSpan = document.querySelector('.hits');
 const pointsSpan = document.querySelector('.points');
+const levelSpan = document.querySelector('.level');
+const ufoSpeedSpan = document.querySelector('.ufoSpeed');
+
 let ufoSpeed = 0.7;
 const rocket = PIXI.Sprite.from('assets/rocket.png');
 rocket.x = 300;
@@ -28,6 +37,13 @@ gameInterval(function() {
         app.stage.removeChild(rocket);
         stopGame();
     });
+    gameRunningTicks++;
+    if (gameRunningTicks % difficultyIncreaseEveryTicks === 0) {
+        level++;
+        levelSpan.innerText = level;
+        ufoSpeed *= increaseSpeed;
+        ufoSpeedSpan.innerText = Math.floor(Math.round(ufoSpeed*10))/10;
+    }
 },1000);
 
 //const bullet = PIXI.Sprite.from('assets/bullet.png');
