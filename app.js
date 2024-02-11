@@ -2,7 +2,10 @@
 const app = new PIXI.Application();
 const ufos = [];
 document.body.appendChild(app.view);
-
+let hits = 0;
+let points = 0;
+const hitsSpan = document.querySelector('.hits');
+const pointsSpan = document.querySelector('.points');
 let ufoSpeed = 0.7;
 const rocket = PIXI.Sprite.from('assets/rocket.png');
 rocket.x = 300;
@@ -49,5 +52,9 @@ function rightKeyPressed() {
     waitForCollision(bullet,ufos).then(function([bullet,ufo]) {
         app.stage.removeChild(ufo);
         app.stage.removeChild(bullet);
+        hits++;
+        points++;
+        hitsSpan.innerText=hits; 
+        pointsSpan.innerText=points;
     })
 }
