@@ -12,12 +12,13 @@ let gameRunningTicks = 0;
 const difficultyIncreaseEveryTicks=15;
 const increaseSpeed=1.1;
 
-const hitsSpan = document.querySelector('.hits');
-const pointsSpan = document.querySelector('.points');
-const levelSpan = document.querySelector('.level');
-const ufoSpeedSpan = document.querySelector('.ufoSpeed');
-
-const xSpan = document.querySelector('.x');
+const spans = {
+    hitsSpan : document.querySelector('.hits'),
+    pointsSpan : document.querySelector('.points'),
+    levelSpan : document.querySelector('.level'),
+    ufoSpeedSpan : document.querySelector('.ufoSpeed'),
+    xSpan : document.querySelector('.x')
+}
 
 let ufoSpeed = 0.7;
 const rocket = PIXI.Sprite.from('assets/rocket.png');
@@ -36,25 +37,19 @@ function cleanUpBullets() {
 }
 
 gameInterval(function() {
-    const ufoNr=random(1,2);
-    const ufo = PIXI.Sprite.from(`assets/ufo${ufoNr}.png`);
-    ufo.x = random(0,700);
-    ufo.y = -15;
-    ufo.scale.x = 0.1;
-    ufo.scale.y = 0.1;
-    app.stage.addChild(ufo);
-    ufos.push(ufo);
-    flyDown(ufo,ufoSpeed);
-    waitForCollision(ufo,rocket).then(function() {
+    ufo = new Ufo(app,spans,level,ufoSpeed);
+    ufos.push(ufo.ufo);
+    flyDown(ufo.ufo,ufoSpeed);
+    waitForCollision(ufo.ufo,rocket).then(function() {
         app.stage.removeChild(rocket);
         stopGame();
     });
     gameRunningTicks++;
     if (gameRunningTicks % difficultyIncreaseEveryTicks === 0) {
         level++;
-        levelSpan.innerText = level;
+        spans.levelSpan.innerText = level;
         ufoSpeed *= increaseSpeed;
-        ufoSpeedSpan.innerText = Math.floor(Math.round(ufoSpeed*10))/10;
+        spans.ufoSpeedSpan.innerText = Math.floor(Math.round(ufoSpeed*10))/10;
     }
     cleanUpUfos();
     cleanUpBullets();
@@ -65,13 +60,13 @@ gameInterval(function() {
 function leftKeyPressed() {
     rocket.x -= 5;
     if (rocket.x < 0) {rocket.x = 0; }
-    xSpan.innerText = rocket.x;
+    spans.xSpan.innerText = rocket.x;
 }
 
 function rightKeyPressed() {
     rocket.x += 5;
     if (rocket.x > app.view.width - 25) {rocket.x = app.view.width - 25; }
-    xSpan.innerText = rocket.x;
+    spans.xSpan.innerText = rocket.x;
 }
 
  function spaceKeyPressed() {
@@ -85,11 +80,9 @@ function rightKeyPressed() {
     bullets.push(bullet);
     flyUp(bullet,3);
     waitForCollision(bullet,ufos).then(function([bullet,ufo]) {
-        app.stage.removeChild(ufo);
+        ufo.hit();
         app.stage.removeChild(bullet);
-        hits++;
-        points++;
-        hitsSpan.innerText=hits; 
+        spanhitsSpan.innerText=hits; 
         pointsSpan.innerText=points;
     })
 }
